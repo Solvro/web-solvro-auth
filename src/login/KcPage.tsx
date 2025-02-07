@@ -4,6 +4,7 @@ import { Suspense, lazy } from "react";
 
 import type { KcContext } from "./KcContext";
 import Template from "./Template";
+import { TemplateCustom } from "./TemplateCustom";
 import { useI18n } from "./i18n";
 
 const Login = lazy(() => import("./pages/Login"));
@@ -26,8 +27,8 @@ export default function KcPage(props: { kcContext: KcContext }) {
             return (
               <Login
                 {...{ kcContext, i18n, classes }}
-                Template={Template}
-                doUseDefaultCss={true}
+                Template={TemplateCustom}
+                doUseDefaultCss={false}
               />
             );
           default:

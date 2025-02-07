@@ -22,6 +22,8 @@
   },
   "prettier": "@solvro/config/prettier",
   "dependencies": {
+    "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -40,6 +42,8 @@
     "@solvro/config": "^1.13.3",
     "@storybook/react": "^8.1.10",
     "@storybook/react-vite": "^8.1.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.0.4",
     "@types/node": "^22.13.1",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -59,7 +63,7 @@
     "postcss": "^8.5.1",
     "prettier": "3.3.1",
     "storybook": "^8.1.10",
-    "tailwindcss": "^4.0.4",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.15.0",
     "vite": "^5.0.8"
