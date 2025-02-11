@@ -6,7 +6,6 @@ import { useSetClassName } from "keycloakify/tools/useSetClassName";
 import { Globe2Icon } from "lucide-react";
 import { useEffect } from "react";
 
-import { ModeToggle } from "../components/mode-toggle";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import {
