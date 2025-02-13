@@ -7,6 +7,14 @@
     "adonisjs-ally",
     "adonisjs"
   ],
+  "homepage": "https://github.com/Solvro/web-solvro-auth#readme",
+  "bugs": {
+    "url": "https://github.com/Solvro/web-solvro-auth/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Solvro/web-solvro-auth.git"
+  },
   "license": "MIT",
   "author": "",
   "type": "module",
@@ -43,5 +51,15 @@
     "@adonisjs/ally": "^5.0.2",
     "@adonisjs/core": "^6.17.2",
     "@vinejs/vine": "^3.0.0"
+  },
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "volta": {
+    "node": "22.14.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
