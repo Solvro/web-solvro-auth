@@ -8,11 +8,13 @@
 */
 import router from "@adonisjs/core/services/router";
 
+import User from "#models/user";
+
 router.get("/auth/keycloak/redirect", ({ ally }) => {
   return ally.use("keycloak").redirect();
 });
 
-router.get("/auth/keycloak/callback", async ({ ally }) => {
+router.get("/auth/keycloak/callback", async ({ ally, auth }) => {
   const keycloak = ally.use("keycloak");
   /**
    * User has denied access by canceling
@@ -40,7 +42,16 @@ router.get("/auth/keycloak/callback", async ({ ally }) => {
   /**
    * Access user info
    */
-  const user = await keycloak.user();
+  const keycloakUser = await keycloak.user();
+
+  const user = await User.firstOrCreate(
+    { email: keycloakUser.email },
+    {
+      email: keycloakUser.email,
+    },
+  );
+
+  auth.use("web").login();
   return user;
 });
 

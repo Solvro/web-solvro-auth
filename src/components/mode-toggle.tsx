@@ -10,6 +10,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export function ModeToggle() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isDarkMode, setIsDarkMode] = useState(false);
 
   const setTheme = (mode: string) => {

@@ -54,7 +54,11 @@ export type KeycloakDriverConfig = {
  * Driver implementation. It is mostly configuration driven except the API call
  * to get user info.
  */
-export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
+export class KeycloakDriver
+  extends Oauth2Driver<KeycloakDriverAccessToken, KeycloakDriverScopes>
+  implements
+    AllyDriverContract<KeycloakDriverAccessToken, KeycloakDriverScopes>
+{
   /**
    * The URL for the redirect request. The user will be redirected on this page
    * to authorize the request.
@@ -142,7 +146,9 @@ export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
      */
     this.loadState();
   }
-  protected configureRedirectRequest(request: RedirectRequest) {
+  protected configureRedirectRequest(
+    request: RedirectRequest<KeycloakDriverScopes>,
+  ) {
     request.scopes(["openid"]);
     request.param("response_type", "code");
   }
@@ -176,7 +182,9 @@ export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
    *
    * https://github.com/adonisjs/ally/blob/develop/src/Drivers/Google/index.ts#L191-L199
    */
-  async user(callback?: (request: ApiRequestContract) => void): Promise {
+  async user(
+    callback?: (request: ApiRequestContract) => void,
+  ): Promise<AllyUserContract<KeycloakDriverAccessToken>> {
     const accessToken = await this.accessToken();
     const request = this.httpClient(
       this.config.userInfoUrl || this.userInfoUrl,
@@ -193,7 +201,13 @@ export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
     const user = await this.getUserInfo(accessToken.token, callback);
 
     return {
-      ...user,
+      name: user.name,
+      avatarUrl: user.avatarUrl,
+      email: user.email,
+      emailVerificationState: user.emailVerificationState,
+      id: user.id,
+      nickName: user.nickName,
+      original: user.original,
       token: { ...accessToken },
     };
   }
@@ -201,7 +215,7 @@ export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
   async userFromToken(
     accessToken: string,
     callback?: (request: ApiRequestContract) => void,
-  ): Promise {
+  ): Promise<AllyUserContract<{ token: string; type: "bearer" }>> {
     const request = this.httpClient(
       this.config.userInfoUrl || this.userInfoUrl,
     );
@@ -246,6 +260,8 @@ export class KeycloakDriver extends Oauth2Driver implements AllyDriverContract {
     }
 
     const body = await request.get();
+
+    console.log(body);
 
     return {
       id: body.sub,
