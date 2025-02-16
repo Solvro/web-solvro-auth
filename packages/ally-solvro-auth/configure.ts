@@ -1,9 +1,3 @@
-/**
- * @rlanz/bull-queue
- *
- * @license MIT
- * @copyright Romain Lanz <romain.lanz@pm.me>
- */
 import assert from "node:assert";
 import { SyntaxKind } from "ts-morph";
 
@@ -43,14 +37,20 @@ function addControllerImportIfNotExists(sourceFile: SourceFile) {
   );
 
   if (!hasControllerImport) {
-    sourceFile.addVariableStatement({
-      declarations: [
-        {
-          name: "AuthController",
-          initializer: '() => import("#controllers/auth_controller")',
-        },
-      ],
-    });
+    const importDeclarations = sourceFile.getImportDeclarations();
+
+    if (importDeclarations.length > 0) {
+      const lastImport = importDeclarations[importDeclarations.length - 1];
+      sourceFile.insertStatements(lastImport.getChildIndex() + 1, [
+        "", // Add empty line for spacing
+        'const AuthController = () => import("#controllers/auth_controller");',
+      ]);
+    } else {
+      // If no imports, add at the beginning (after any comments)
+      sourceFile.insertStatements(0, [
+        'const AuthController = () => import("#controllers/auth_controller");',
+      ]);
+    }
   }
 }
 
@@ -113,7 +113,7 @@ export async function configure(command: Configure) {
     },
     leadingComment: "Variables for @solvro/auth",
   });
-
+  const action = command.logger.action("update start/routes.ts");
   const project = await codemods.getTsMorphProject();
   assert(project);
 
@@ -124,4 +124,6 @@ export async function configure(command: Configure) {
   addNewRoutes(file);
 
   await file.save();
+
+  action.succeeded();
 }
