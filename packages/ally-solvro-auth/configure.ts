@@ -5,6 +5,7 @@
  * @copyright Romain Lanz <romain.lanz@pm.me>
  */
 import assert from "node:assert";
+import { SyntaxKind } from "ts-morph";
 
 import { CodeTransformer } from "@adonisjs/assembler/code_transformer";
 import type Configure from "@adonisjs/core/commands/configure";
@@ -56,9 +57,7 @@ function addControllerImportIfNotExists(sourceFile: SourceFile) {
 function addNewRoutes(sourceFile: SourceFile) {
   // Find the last router statement
   const routerStatements = sourceFile
-    // @ts-expect-error ??
     .getDescendantsOfKind(SyntaxKind.CallExpression)
-    // @ts-expect-error ??
     .filter((call) => call.getExpression().getText().startsWith("router."));
 
   const lastRouterStatement = routerStatements[routerStatements.length - 1];
