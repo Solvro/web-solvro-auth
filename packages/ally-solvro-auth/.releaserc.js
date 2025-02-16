@@ -8,7 +8,8 @@ export default {
     [
       "@semantic-release/git",
       {
-        message: "release: ${nextRelease.version}",
+        message:
+          "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
       },
     ],
   ],
