@@ -5,7 +5,8 @@
   "keywords": [
     "social-auth",
     "adonisjs-ally",
-    "adonisjs"
+    "adonisjs",
+    "solvro-auth"
   ],
   "homepage": "https://github.com/Solvro/web-solvro-auth#readme",
   "bugs": {
@@ -16,7 +17,7 @@
     "url": "git+https://github.com/Solvro/web-solvro-auth.git"
   },
   "license": "MIT",
-  "author": "",
+  "author": "Bartosz Gotowski",
   "type": "module",
   "exports": {
     ".": {
@@ -25,26 +26,32 @@
       "types": "./build/index.d.ts"
     }
   },
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build/index.js",
     "build/index.d.ts",
     "build/configure.js",
     "build/configure.d.ts",
-    "build/src"
+    "build/src",
+    "build/stubs",
+    "src"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build-only && npm run copyfiles",
+    "build-only": "tsc",
+    "copyfiles": "copyfiles \"stubs/**/**/*.stub\" build",
     "dev": "tsc --watch",
     "format": "prettier --write .",
     "lint": "eslint .",
+    "prepublishOnly": "npm run build",
     "release": "semantic-release",
     "typecheck": "tsc --noEmit"
   },
   "prettier": "@solvro/config/prettier",
   "devDependencies": {
     "@adonisjs/ally": "^5.0.2",
+    "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/core": "^6.17.2",
     "@adonisjs/eslint-config": "^2.0.0",
     "@adonisjs/tsconfig": "^1.4.0",

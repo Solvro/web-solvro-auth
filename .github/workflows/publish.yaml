@@ -31,10 +31,6 @@ jobs:
         working-directory: ./packages/ally-solvro-auth
         run: npm ci
 
-      - name: Install dependencies
-        working-directory: ./packages/ally-solvro-auth
-        run: npm run build
-
       - name: Publish
         working-directory: ./packages/ally-solvro-auth
         run: npm run release
