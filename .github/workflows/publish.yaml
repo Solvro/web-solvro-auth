@@ -27,9 +27,12 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Install dependencies
-        shell: bash
         working-directory: ./packages/ally-solvro-auth
         run: npm ci
+
+      - name: Install dependencies
+        working-directory: ./packages/ally-solvro-auth
+        run: npm run build
 
       - name: Publish
         working-directory: ./packages/ally-solvro-auth
