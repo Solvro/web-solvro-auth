@@ -1,7 +1,7 @@
 {
   "name": "@solvro/auth",
   "version": "1.1.0",
-  "description": "Starter kit to create an Ally driver for an OAuth2 service",
+  "description": "AdonisJS Ally provider for Solvro Auth",
   "keywords": [
     "social-auth",
     "adonisjs-ally",
