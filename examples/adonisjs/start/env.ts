@@ -14,6 +14,7 @@ export default await Env.create(new URL("../", import.meta.url), {
   NODE_ENV: Env.schema.enum(["development", "production", "test"] as const),
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
+  APP_DOMAIN: Env.schema.string(),
   HOST: Env.schema.string({ format: "host" }),
   LOG_LEVEL: Env.schema.enum([
     "fatal",
@@ -31,6 +32,6 @@ export default await Env.create(new URL("../", import.meta.url), {
   */
   SESSION_DRIVER: Env.schema.enum(["cookie", "memory"] as const),
 
-  KEYCLOAK_CLIENT_ID: Env.schema.string(),
-  KEYCLOAK_CLIENT_SECRET: Env.schema.string.optional(),
+  SOLVRO_AUTH_CLIENT_ID: Env.schema.string(),
+  SOLVRO_AUTH_CLIENT_SECRET: Env.schema.string.optional(),
 });

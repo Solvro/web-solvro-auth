@@ -9,7 +9,7 @@
 */
 /**
 |--------------------------------------------------------------------------
- *  Search keyword "KeycloakDriver" and replace it with a meaningful name
+ *  Search keyword "SolvroAuthDriver" and replace it with a meaningful name
 |--------------------------------------------------------------------------
  */
 import { Oauth2Driver, type RedirectRequest } from "@adonisjs/ally";
@@ -20,13 +20,15 @@ import type {
 } from "@adonisjs/ally/types";
 import type { HttpContext } from "@adonisjs/core/http";
 
+import { userSchema } from "./user_schema.js";
+
 /**
  *
  * Access token returned by your driver implementation. An access
  * token must have "token" and "type" properties and you may
  * define additional properties (if needed)
  */
-export type KeycloakDriverAccessToken = {
+export type SolvroAuthDriverAccessToken = {
   token: string;
   type: "bearer";
 };
@@ -34,14 +36,14 @@ export type KeycloakDriverAccessToken = {
 /**
  * Scopes accepted by the driver implementation.
  */
-export type KeycloakDriverScopes = "openid profile";
+export type SolvroAuthDriverScopes = "openid profile";
 
 /**
  * The configuration accepted by the driver implementation.
  */
-export type KeycloakDriverConfig = {
+export type SolvroAuthDriverConfig = {
   clientId: string;
-  keycloakUrl?: string;
+  solvroAuthUrl?: string;
   realm?: string;
   clientSecret: string;
   callbackUrl: string;
@@ -54,10 +56,10 @@ export type KeycloakDriverConfig = {
  * Driver implementation. It is mostly configuration driven except the API call
  * to get user info.
  */
-export class KeycloakDriver
-  extends Oauth2Driver<KeycloakDriverAccessToken, KeycloakDriverScopes>
+export class SolvroAuthDriver
+  extends Oauth2Driver<SolvroAuthDriverAccessToken, SolvroAuthDriverScopes>
   implements
-    AllyDriverContract<KeycloakDriverAccessToken, KeycloakDriverScopes>
+    AllyDriverContract<SolvroAuthDriverAccessToken, SolvroAuthDriverScopes>
 {
   /**
    * The URL for the redirect request. The user will be redirected on this page
@@ -100,7 +102,7 @@ export class KeycloakDriver
    * approach is to prefix the oauth provider name to `oauth_state` value. For example:
    * For example: "facebook_oauth_state"
    */
-  protected stateCookieName = "KeycloakDriver_oauth_state";
+  protected stateCookieName = "SolvroAuthDriver_oauth_state";
 
   /**
    * Parameter name to be used for sending and receiving the state from.
@@ -122,21 +124,27 @@ export class KeycloakDriver
 
   constructor(
     ctx: HttpContext,
-    public config: KeycloakDriverConfig,
+    public config: SolvroAuthDriverConfig,
   ) {
     super(ctx, config);
 
     this.config = config;
 
-    if (this.config.keycloakUrl) {
-      this.authorizeUrl = this.buildKeycloakUrl("auth");
-
-      this.accessTokenUrl = this.buildKeycloakUrl("token");
-
-      this.userInfoUrl = this.buildKeycloakUrl("userinfo");
+    if (process.env.NODE_ENV === "development") {
+      this.config.realm = this.config.realm || "myrealm";
     }
 
-    console.log(this.authorizeUrl);
+    if (process.env.NODE_ENV === "production") {
+      this.config.realm = this.config.realm || "solvro_apps";
+    }
+
+    if (this.config.solvroAuthUrl) {
+      this.authorizeUrl = this.buildSolvroAuthUrl("auth");
+
+      this.accessTokenUrl = this.buildSolvroAuthUrl("token");
+
+      this.userInfoUrl = this.buildSolvroAuthUrl("userinfo");
+    }
 
     /**
      * Extremely important to call the following method to clear the
@@ -147,7 +155,7 @@ export class KeycloakDriver
     this.loadState();
   }
   protected configureRedirectRequest(
-    request: RedirectRequest<KeycloakDriverScopes>,
+    request: RedirectRequest<SolvroAuthDriverScopes>,
   ) {
     request.scopes(["openid"]);
     request.param("response_type", "code");
@@ -158,7 +166,7 @@ export class KeycloakDriver
    * is made by the base implementation of "Oauth2" driver and this is a
    * hook to pre-configure the request.
    */
-  // protected configureRedirectRequest(request: RedirectRequest<KeycloakDriverScopes>) {}
+  // protected configureRedirectRequest(request: RedirectRequest<SolvroAuthDriverScopes>) {}
 
   /**
    * Optionally configure the access token request. The actual request is made by
@@ -184,7 +192,7 @@ export class KeycloakDriver
    */
   async user(
     callback?: (request: ApiRequestContract) => void,
-  ): Promise<AllyUserContract<KeycloakDriverAccessToken>> {
+  ): Promise<AllyUserContract<SolvroAuthDriverAccessToken>> {
     const accessToken = await this.accessToken();
     const request = this.httpClient(
       this.config.userInfoUrl || this.userInfoUrl,
@@ -248,27 +256,26 @@ export class KeycloakDriver
   }
 
   /**
-   * Fetches the user info from the Keycloak API
+   * Fetches the user info from the SolvroAuth API
    */
   protected async getUserInfo(
     token: string,
     callback?: (request: ApiRequestContract) => void,
-  ) {
+  ): Promise<
+    Omit<AllyUserContract<{ token: string; type: "bearer" }>, "token">
+  > {
     const request = this.getAuthenticatedRequest(this.userInfoUrl, token);
     if (typeof callback === "function") {
       callback(request);
     }
+    const responseBody = await request.get();
 
-    const body = await request.get();
-
-    console.log(body);
+    const body = await userSchema.validate(responseBody);
 
     return {
       id: body.sub,
+      name: body.name ?? body.preferred_username,
       nickName: body.preferred_username,
-      lastName: body.family_name,
-      firstName: body.given_name,
-      name: body.name,
       email: body.email,
       avatarUrl: null,
       emailVerificationState: body.email_verified
@@ -279,17 +286,21 @@ export class KeycloakDriver
   }
 
   /**
-   * Build keycloak URL
+   * Build solvroauth URL
    */
-  protected buildKeycloakUrl(action: string): string {
-    if (!this.config.keycloakUrl) {
-      throw Error("Missing keycloak URL");
+  protected buildSolvroAuthUrl(action: string): string {
+    if (!this.config.solvroAuthUrl) {
+      throw Error("Missing solvroauth URL");
     }
     if (!this.config.realm) {
       throw Error("Missing realm name");
     }
 
-    return this.config.keycloakUrl
+    const url =
+      this.config.solvroAuthUrl +
+      `/realms/{realm}/protocol/openid-connect/{action}`;
+
+    return url
       .replace("{realm}", this.config.realm)
       .replace("{action}", action);
   }
@@ -299,8 +310,8 @@ export class KeycloakDriver
  * The factory function to reference the driver implementation
  * inside the "config/ally.ts" file.
  */
-export function KeycloakDriverService(
-  config: KeycloakDriverConfig,
-): (ctx: HttpContext) => KeycloakDriver {
-  return (ctx) => new KeycloakDriver(ctx, config);
+export function SolvroAuthDriverService(
+  config: SolvroAuthDriverConfig,
+): (ctx: HttpContext) => SolvroAuthDriver {
+  return (ctx) => new SolvroAuthDriver(ctx, config);
 }

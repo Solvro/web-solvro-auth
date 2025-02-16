@@ -22,10 +22,13 @@
   "files": [
     "build/index.js",
     "build/index.d.ts",
+    "build/configure.js",
+    "build/configure.d.ts",
     "build/src"
   ],
   "scripts": {
     "build": "tsc",
+    "dev": "tsc --watch",
     "format": "prettier --write .",
     "lint": "eslint .",
     "release": "semantic-release",

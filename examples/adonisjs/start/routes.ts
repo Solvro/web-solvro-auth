@@ -8,55 +8,21 @@
 */
 import router from "@adonisjs/core/services/router";
 
-import User from "#models/user";
+import { middleware } from "./kernel.js";
 
-router.get("/auth/keycloak/redirect", ({ ally }) => {
-  return ally.use("keycloak").redirect();
-});
+const AuthController = () => import("#controllers/auth_controller");
 
-router.get("/auth/keycloak/callback", async ({ ally, auth }) => {
-  const keycloak = ally.use("keycloak");
-  /**
-   * User has denied access by canceling
-   * the login flow
-   */
-  if (keycloak.accessDenied()) {
-    return "You have cancelled the login process";
-  }
+router.get("/auth/login", [AuthController, "login"]).use(middleware.guest());
+router
+  .get("/auth/callback", [AuthController, "callback"])
+  .use(middleware.guest());
+router.post("/auth/logout", [AuthController, "logout"]).use(middleware.auth());
 
-  /**
-   * OAuth state verification failed. This happens when the
-   * CSRF cookie gets expired.
-   */
-  if (keycloak.stateMisMatch()) {
-    return "We are unable to verify the request. Please try again";
-  }
-
-  /**
-   * GitHub responded with some error
-   */
-  if (keycloak.hasError()) {
-    return keycloak.getError();
-  }
-
-  /**
-   * Access user info
-   */
-  const keycloakUser = await keycloak.user();
-
-  const user = await User.firstOrCreate(
-    { email: keycloakUser.email },
-    {
-      email: keycloakUser.email,
-    },
-  );
-
-  auth.use("web").login();
-  return user;
-});
-
-router.get("/", async () => {
-  return {
-    hello: "world",
-  };
-});
+router
+  .get("/", async ({ auth }) => {
+    return {
+      hello: "world",
+      user: auth.user,
+    };
+  })
+  .use(middleware.silentAuth());
