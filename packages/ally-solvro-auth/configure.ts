@@ -11,9 +11,11 @@ import { stubsRoot } from "./stubs/main.js";
 export async function configure(command: Configure) {
   const codemods = await command.createCodemods();
 
+  codemods.overwriteExisting = true;
+
   command.logger.info("Konfiguracja @solvro/auth");
   command.logger.info(
-    "Żeby dostać CLIENT_ID i CLIENT_SECRET, zapytaj na #main i zpinguj @Bartosz Gotowski",
+    "Żeby dostać CLIENT_ID i CLIENT_SECRET, zapytaj na #main i zpinguj @Bartosz Gotowski 😍",
   );
 
   const clientId = await command.prompt.ask("Jaki masz CLIENT_ID? ", {
@@ -40,7 +42,7 @@ export async function configure(command: Configure) {
     variables: {
       APP_DOMAIN: `Env.schema.string()`,
       SOLVRO_AUTH_CLIENT_ID: "Env.schema.string()",
-      SOLVRO_AUTH_CLIENT_SECRET: "Env.schema.string.optional()",
+      SOLVRO_AUTH_CLIENT_SECRET: "Env.schema.string()",
     },
     leadingComment: "Variables for @solvro/auth",
   });
