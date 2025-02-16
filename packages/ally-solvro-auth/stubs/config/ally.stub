@@ -11,6 +11,7 @@ const allyConfig = defineConfig({
   solvroAuth: SolvroAuthDriverService({
     callbackUrl: `${env.get("APP_DOMAIN")}/auth/callback`,
     clientId: env.get("SOLVRO_AUTH_CLIENT_ID"),
+    clientSecret: env.get("SOLVRO_AUTH_CLIENT_SECRET"),
   }),
 });
 

@@ -597,6 +597,32 @@
       },
       "notBefore": 0,
       "groups": []
+    },
+    {
+      "id": "2b6758d3-c4a0-4da4-8a79-3e03f0c14aa0",
+      "username": "wszyzdgo@gmail.com",
+      "email": "wszyzdgo@gmail.com",
+      "emailVerified": true,
+      "attributes": {
+        "terms_and_conditions": ["1739720205"]
+      },
+      "createdTimestamp": 1739720199905,
+      "enabled": true,
+      "totp": false,
+      "credentials": [
+        {
+          "id": "f0b1c6d2-d960-4efc-8cb3-45b043c092a7",
+          "type": "password",
+          "createdDate": 1739720199935,
+          "secretData": "{\"value\":\"epLZZXTwNFWmKbz0sTLsBfaMPrvO1y5WNWrNWZbQVPA=\",\"salt\":\"/AWEEtdRbBcAYZQsBQJurA==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-myrealm"],
+      "notBefore": 0,
+      "groups": []
     }
   ],
   "scopeMappings": [
@@ -834,7 +860,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
-      "publicClient": true,
+      "publicClient": false,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
@@ -884,7 +910,8 @@
         "phone",
         "offline_access",
         "microprofile-jwt"
-      ]
+      ],
+      "secret": "a17c54tH8AmWC0yq7FSQbNpPp8wELqeN"
     },
     {
       "id": "e05cc68c-5e53-4796-ae3a-a1bfbf5c51bb",
