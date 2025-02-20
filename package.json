@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
-    "@solvro/config": "^1.13.3",
+    "@solvro/config": "^1.13.4",
     "@storybook/react": "^8.5.5",
     "@storybook/react-vite": "^8.5.6",
     "@tailwindcss/typography": "^0.5.16",
