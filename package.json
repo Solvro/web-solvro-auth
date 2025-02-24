@@ -39,7 +39,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
+    "@eslint/js": "^9.21.0",
     "@solvro/config": "^1.13.4",
     "@storybook/react": "^8.5.5",
     "@storybook/react-vite": "^8.5.8",
