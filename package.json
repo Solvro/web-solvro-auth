@@ -42,7 +42,7 @@
     "@eslint/js": "^9.21.0",
     "@solvro/config": "^1.13.4",
     "@storybook/react": "^8.5.5",
-    "@storybook/react-vite": "^8.6.0",
+    "@storybook/react-vite": "^8.6.2",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.9",
     "@types/node": "^22.13.5",
