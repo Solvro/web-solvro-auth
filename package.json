@@ -31,7 +31,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "keycloakify": "^11.8.22",
-    "lucide-react": "^0.483.0",
+    "lucide-react": "^0.484.0",
     "next": "^15.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
