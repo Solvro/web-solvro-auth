@@ -130,16 +130,10 @@ export class SolvroAuthDriver
 
     this.config = config;
 
-    if (process.env.NODE_ENV === "development") {
-      this.config.realm = this.config.realm || "myrealm";
-    }
+    this.config.realm = this.config.realm || "solvro";
 
-    if (process.env.NODE_ENV === "production") {
-      this.config.realm = this.config.realm || "solvro";
-
-      this.config.solvroAuthUrl =
-        this.config.solvroAuthUrl || "https://auth.s.solvro.com";
-    }
+    this.config.solvroAuthUrl =
+      this.config.solvroAuthUrl || "https://auth.s.solvro.com";
 
     if (this.config.solvroAuthUrl) {
       this.authorizeUrl = this.buildSolvroAuthUrl("auth");
