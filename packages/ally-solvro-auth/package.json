@@ -68,9 +68,9 @@
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
-    "@adonisjs/ally": "^5.0.2",
-    "@adonisjs/core": "^6.17.2",
-    "@vinejs/vine": "^3.0.0"
+    "@adonisjs/ally": "^5",
+    "@adonisjs/core": "^6",
+    "@vinejs/vine": "*"
   },
   "packageManager": "npm@10.9.2",
   "engines": {
