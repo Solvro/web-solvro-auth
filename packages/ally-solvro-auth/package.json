@@ -1,6 +1,6 @@
 {
   "name": "@solvro/auth",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "AdonisJS Ally provider for Solvro Auth",
   "keywords": [
     "social-auth",
