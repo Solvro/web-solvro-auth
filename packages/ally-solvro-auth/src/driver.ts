@@ -133,7 +133,7 @@ export class SolvroAuthDriver
     this.config.realm = this.config.realm || "solvro";
 
     this.config.solvroAuthUrl =
-      this.config.solvroAuthUrl || "https://auth.solvro.com";
+      this.config.solvroAuthUrl || "https://auth.solvro.pl";
 
     if (this.config.solvroAuthUrl) {
       this.authorizeUrl = this.buildSolvroAuthUrl("auth");
