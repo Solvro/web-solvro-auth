@@ -22,8 +22,6 @@ import org.keycloak.events.EventBuilder;
 import org.keycloak.models.FederatedIdentityModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserModel;
-import org.keycloak.services.ErrorResponse;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.QueryParam;
@@ -41,10 +39,10 @@ import java.util.Map;
  */
 public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityProviderConfig> {
     
-    private static final Logger logger = Logger.getLogger(UsosIdentityProvider.class);
+    private static final Logger LOGGER = Logger.getLogger(UsosIdentityProvider.class);
     private static final String REQUEST_TOKEN_SESSION_KEY = "USOS_REQUEST_TOKEN";
     private static final String REQUEST_TOKEN_SECRET_SESSION_KEY = "USOS_REQUEST_TOKEN_SECRET";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     
     public UsosIdentityProvider(KeycloakSession session, UsosIdentityProviderConfig config) {
         super(session, config);
@@ -70,12 +68,15 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
                 getConfig().getAuthorizationUrl()
             );
             
-            String callbackUrl = request.getRedirectUri() + "?state=" + request.getState().getEncoded();
+            String callbackUrl = request.getRedirectUri() + "?state=" 
+                    + request.getState().getEncoded();
             String authUrl = provider.retrieveRequestToken(consumer, callbackUrl);
             
             // Store request token in session
-            request.getAuthenticationSession().setClientNote(REQUEST_TOKEN_SESSION_KEY, consumer.getToken());
-            request.getAuthenticationSession().setClientNote(REQUEST_TOKEN_SECRET_SESSION_KEY, consumer.getTokenSecret());
+            request.getAuthenticationSession().setClientNote(REQUEST_TOKEN_SESSION_KEY, 
+                    consumer.getToken());
+            request.getAuthenticationSession().setClientNote(REQUEST_TOKEN_SECRET_SESSION_KEY, 
+                    consumer.getTokenSecret());
             
             return Response.seeOther(URI.create(authUrl)).build();
             
@@ -90,7 +91,8 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
     }
     
     @Override
-    public void preprocessFederatedIdentity(KeycloakSession session, RealmModel realm, BrokeredIdentityContext context) {
+    public void preprocessFederatedIdentity(KeycloakSession session, RealmModel realm, 
+            BrokeredIdentityContext context) {
         // Implementation for pre-processing if needed
     }
     
@@ -120,7 +122,7 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
                                    @QueryParam("state") String state) {
             try {
                 if (oauthVerifier == null || oauthToken == null) {
-                    logger.error("Missing oauth_verifier or oauth_token parameters");
+                    LOGGER.error("Missing oauth_verifier or oauth_token parameters");
                     return callback.error("Missing OAuth parameters");
                 }
                 
@@ -131,7 +133,7 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
                     .getClientNote(REQUEST_TOKEN_SECRET_SESSION_KEY);
                 
                 if (requestToken == null || requestTokenSecret == null) {
-                    logger.error("Request token not found in session");
+                    LOGGER.error("Request token not found in session");
                     return callback.error("Request token not found in session");
                 }
                 
@@ -161,7 +163,7 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
                 return callback.authenticated(identity);
                 
             } catch (Exception e) {
-                logger.error("Error processing OAuth callback", e);
+                LOGGER.error("Error processing OAuth callback", e);
                 return callback.error("Authentication failed: " + e.getMessage());
             }
         }
@@ -184,9 +186,10 @@ public class UsosIdentityProvider extends AbstractIdentityProvider<UsosIdentityP
     
     private BrokeredIdentityContext parseUserInfo(String userInfoJson, String accessToken) {
         try {
-            JsonNode userNode = objectMapper.readTree(userInfoJson);
+            JsonNode userNode = OBJECT_MAPPER.readTree(userInfoJson);
             
-            BrokeredIdentityContext identity = new BrokeredIdentityContext(userNode.get("id").asText(), getConfig().getModel());
+            BrokeredIdentityContext identity = new BrokeredIdentityContext(userNode.get("id").asText(), 
+                    getConfig().getModel());
             identity.setUsername(userNode.get("id").asText());
             identity.setEmail(userNode.path("email").asText());
             identity.setFirstName(userNode.path("first_name").asText());
