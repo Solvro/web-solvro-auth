@@ -8,7 +8,6 @@ const Separator = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
 >(
   (
-    // eslint-disable-next-line react/prop-types
     { className, orientation = "horizontal", decorative = true, ...props },
     ref,
   ) => (
