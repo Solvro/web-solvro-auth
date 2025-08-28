@@ -57,3 +57,6 @@ jspm_packages
 /storybook-static
 
 .keycloaklify/*
+
+# Maven build artifacts
+keycloak-usos-provider/target/
