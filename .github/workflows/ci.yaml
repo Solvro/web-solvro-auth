@@ -19,3 +19,53 @@ jobs:
         run: npm ci
 
       - run: npm run build-keycloak-theme
+
+  java-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and test USOS provider
+        working-directory: keycloak-usos-provider
+        run: |
+          echo "Building USOS OAuth 1.0a provider..."
+          mvn clean compile
+          echo "Running comprehensive tests..."
+          mvn test
+          echo "Running static analysis..."
+          mvn checkstyle:check
+          mvn spotbugs:check
+          mvn pmd:check
+          echo "Building final JAR..."
+          mvn package
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: java-test-results
+          path: |
+            keycloak-usos-provider/target/surefire-reports/
+            keycloak-usos-provider/target/checkstyle-result.xml
+            keycloak-usos-provider/target/spotbugsXml.xml
+            keycloak-usos-provider/target/pmd.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: keycloak-usos-provider/target/site/jacoco/jacoco.xml
+          flags: java

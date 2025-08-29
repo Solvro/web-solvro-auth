@@ -340,6 +340,57 @@ export const WithMoreThanTwoSocialProviders: Story = {
     />
   ),
 };
+
+export const WithUsosProvider: Story = {
+  render: (args) => (
+    <KcPageStory
+      {...args}
+      kcContext={{
+        social: {
+          displayInfo: true,
+          providers: [
+            {
+              loginUrl: "usos",
+              alias: "usos",
+              providerId: "usos",
+              displayName: "USOS",
+              iconClasses: "fa fa-university",
+            },
+          ],
+        },
+      }}
+    />
+  ),
+};
+
+export const WithUsosAndGoogleProviders: Story = {
+  render: (args) => (
+    <KcPageStory
+      {...args}
+      kcContext={{
+        social: {
+          displayInfo: true,
+          providers: [
+            {
+              loginUrl: "google",
+              alias: "google",
+              providerId: "google",
+              displayName: "Google",
+              iconClasses: "fa fa-google",
+            },
+            {
+              loginUrl: "usos",
+              alias: "usos",
+              providerId: "usos",
+              displayName: "USOS",
+              iconClasses: "fa fa-university",
+            },
+          ],
+        },
+      }}
+    />
+  ),
+};
 export const WithSocialProvidersAndWithoutRememberMe: Story = {
   render: (args) => (
     <KcPageStory

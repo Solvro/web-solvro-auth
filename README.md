@@ -4,7 +4,32 @@
     <br/>
 </p>
 
-# Quick start
+# Solvro Keycloak Theme with USOS OAuth 1.0a Integration
+
+This project provides a custom Keycloak theme along with a custom OAuth 1.0a identity provider for USOS (University Student Information System) integration, enabling students to login using their university accounts.
+
+## Features
+
+- **Custom Keycloak Theme**: Modern, responsive design built with React and Tailwind CSS
+- **USOS OAuth 1.0a Provider**: Complete implementation of OAuth 1.0a protocol for USOS API integration
+- **Docker Ready**: Pre-configured Docker build with both theme and provider
+- **Multi-language Support**: Built-in internationalization support
+
+## USOS Integration
+
+The custom USOS identity provider enables seamless authentication with university USOS systems using OAuth 1.0a protocol. Students can login directly using their university credentials.
+
+### Key Features:
+
+- Full OAuth 1.0a flow implementation (request token → authorization → access token)
+- User profile mapping from USOS API
+- Configurable USOS instance endpoints
+- Comprehensive error handling and logging
+- Security best practices
+
+For detailed setup instructions, see [USOS Setup Guide](./USOS_SETUP_GUIDE.md).
+
+## Quick start
 
 ```bash
 git clone https://github.com/keycloakify/keycloakify-starter
