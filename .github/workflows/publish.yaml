@@ -18,14 +18,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/create-github-app-token@v1
+      - uses: actions/create-github-app-token@v2
         id: app-token
         with:
           app-id: ${{ secrets.COOLIFY_APP_ID }}
           private-key: ${{ secrets.COOLIFY_PRIVATE_KEY }}
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
 
       - name: Install dependencies
         working-directory: ./packages/ally-solvro-auth

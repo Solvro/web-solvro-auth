@@ -1,148 +1,210 @@
-# Ally driver boilerplate
+# @solvro/auth
 
-> A boilerplate for creating custom AdonisJS Ally drivers
+> AdonisJS Ally driver dla Solvro Auth
 
-This repo is a starting point to create your custom OAuth2 drivers for [AdonisJS ally](https://docs.adonisjs.com/guides/authentication/social-authentication).
+Oficjalny pakiet do integracji Solvro Auth z aplikacjami AdonisJS. Umożliwia łatwą autentykację użytkowników przez scentralizowany system uwierzytelniania Koła Naukowego Solvro.
 
-The boilerplate is tailored to create one driver per project and publish it as a package on npm.
+## Instalacja
 
-## Getting started
+```bash
+npm install @solvro/auth
+```
 
-Following are the steps to get started.
+## Konfiguracja
 
-- Fork this repo and then clone it on your local machine.
-- Install all the dependencies using `npm`, `pnpm`, or `yarn` (whatever you prefer).
-- Open the `package.json` file and update the `name`, `description`, and the `author` details.
+```bash
+node ace configure @solvro/auth
+```
 
-  ```json
-  {
-    "name": "ally-custom-service",
-    "description": "Starter kit to create an Ally driver for an OAuth2 service",
-    "author": ""
+Podczas konfiguracji zostaniesz poproszony o podanie `CLIENT_ID` i `CLIENT_SECRET`.
+Aby je otrzymać, zapytaj na kanale #main i zpinguj @Bartosz Gotowski 😍.
+
+## Automatyczna konfiguracja
+
+Pakiet automatycznie skonfiguruje:
+
+- ✅ Kontroler uwierzytelniania (`AuthController`)
+- ✅ Trasy logowania/wylogowania
+- ✅ Zmienne środowiskowe
+- ✅ Konfigurację Ally driver
+
+## Użycie
+
+Po konfiguracji możesz używać Solvro Auth w swojej aplikacji:
+
+```typescript
+// Przekierowanie do logowania
+Route.get("/login", ({ ally }) => {
+  return ally.use("solvroAuth").redirect();
+});
+
+// Callback po logowaniu
+Route.get("/callback", async ({ ally, auth, response }) => {
+  const solvroUser = await ally.use("solvroAuth").user();
+
+  // Stwórz lub znajdź użytkownika w bazie danych
+  const user = await User.firstOrCreate(
+    { email: solvroUser.email },
+    {
+      email: solvroUser.email,
+      name: solvroUser.name,
+      solvroId: solvroUser.id,
+    },
+  );
+
+  await auth.use("web").login(user);
+  return response.redirect("/dashboard");
+});
+
+// Wylogowanie
+Route.post("/logout", async ({ auth, response }) => {
+  await auth.use("web").logout();
+  return response.redirect("/");
+});
+```
+
+## Struktura użytkownika
+
+Pakiet zwraca obiekt użytkownika z następującymi polami:
+
+```typescript
+{
+  id: string; // UUID użytkownika w Keycloak
+  email: string; // Adres email
+  name: string; // Pełne imię i nazwisko
+  emailVerified: boolean;
+  original: {
+    // Surowe dane z Keycloak
+    sub: string;
+    email: string;
+    preferred_username: string;
+    given_name: string;
+    family_name: string;
+    // ... inne pola z Keycloak
   }
-  ```
-
-## How is the code structured?
-
-The code for the driver is inside the `src` directory. Make sure to change the `YourDriver` keyword references inside the `src/driver.ts` file with the service name for which you are creating the driver. For example, Change `YourDriver` to `AppleDriver` or `InstagramDriver`.
-
-The driver implementation is mainly driven by the config, except for the `user` and the `userFromToken` methods. Both of these methods are specific to the Oauth provider, so you have to implement them yourself.
-
-The `src/driver.ts` file has the following exports.
-
-#### YourDriverAccessToken
-
-The type defines the properties on the access token returned by the driver. You must read your OAuth provider documentation and list all the properties here.
-
-**Do not change the pre-defined `token` and `bearer` properties.**
-
-```ts
-export type YourDriverAccessToken = {
-  token: string;
-  type: "bearer";
-};
+}
 ```
 
-#### YourDriverScopes
+## Zmienne środowiskowe
 
-Define a union of driver scopes accepted by your OAuth provider. You can check out the [official implementations](https://github.com/adonisjs/ally/blob/next/src/types.ts#L237) to see how they are defined.
+Po konfiguracji w pliku `.env` znajdziesz:
 
-#### YourDriverConfig
-
-The type defines the configuration options that your driver expects. It must specify the following properties and any additional properties your driver needs to be functional.
-
-```ts
-export type YourDriverConfig = {
-  driver: "YourDriverName";
-  clientId: string;
-  clientSecret: string;
-  callbackUrl: string;
-  authorizeUrl?: string;
-  accessTokenUrl?: string;
-  userInfoUrl?: string;
-};
+```env
+APP_DOMAIN=http://localhost:3333
+SOLVRO_AUTH_CLIENT_ID=your-client-id
+SOLVRO_AUTH_CLIENT_SECRET=your-client-secret
 ```
 
-#### YourDriver
+## Konfiguracja
 
-The driver implementation is a standard TypeScript class that extends the base `Oauth2Driver` class. The base driver class forces you to define the following instance properties.
+Pakiet automatycznie aktualizuje następujące pliki:
 
-- `authorizeUrl` is the URL for the redirect request. The user is redirected to this URL to authorize the request. Check out provider docs to find this URL.
-- `accessTokenUrl` is used to exchange the authorization code for the access token. Check out provider docs to find this URL.
-- `userInfoUrl` is used to get the user profile information.
-- `codeParamName` is the query string parameter for reading the **authorization code** after redirecting the user back to the callback URL.
-- `errorParamName` is the query string parameter for finding the error after redirecting the user to the callback URL.
-- `stateCookieName` is the cookie name for storing the CSRF token (also known as the state). Make sure the cookie name does not collide with other drivers. A safer option is to prefix the driver name followed by the `oauth_state` keyword.
-- `stateParamName` is the query string parameter name for setting the state during the authorization redirect.
-- `scopeParamName` is the query string parameter name for sending the scopes during the authorization redirect.
-- `scopesSeparator` is the character used for separating multiple parameters.
+### `config/ally.ts`
 
-#### YourDriverService
+```typescript
+import { SolvroAuthService } from "@solvro/auth";
 
-A factory function to reference the driver within the `config/ally.ts` file of an AdonisJS application. For example:
+import { defineConfig } from "@adonisjs/ally";
 
-```ts
-import { YourDriverService } from "your-package-name";
-
-defineConfig({
-  github: YourDriverService({
-    clientId: env.get("GITHUB_CLIENT_ID")!,
-    clientSecret: env.get("GITHUB_CLIENT_SECRET")!,
+export default defineConfig({
+  solvroAuth: SolvroAuthService({
+    clientId: env.get("SOLVRO_AUTH_CLIENT_ID"),
+    clientSecret: env.get("SOLVRO_AUTH_CLIENT_SECRET"),
     callbackUrl: "",
   }),
 });
 ```
 
-## Development checklist
+### `start/routes.ts`
 
-- [ ] I have renamed all `YourDriver` references to a more meaningful name inside the `src/driver.ts` file.
-- [ ] I have defined the `authorizeUrl` class property.
-- [ ] I have defined the `accessTokenUrl` class property.
-- [ ] I have defined the `userInfoUrl` class property.
-- [ ] I have defined the `codeParamName` class property.
-- [ ] I have defined the `errorParamName` class property.
-- [ ] I have defined the `stateCookieName` class property.
-- [ ] I have defined the `stateParamName` class property.
-- [ ] I have defined the `scopeParamName` class property.
-- [ ] I have defined the `scopesSeparator` class property.
-- [ ] I have implemented the `accessDenied` class method.
-- [ ] I have implemented the `user` class method.
-- [ ] I have implemented the `userFromToken` class method.
+```typescript
+router.get("/auth/login", [AuthController, "login"]).use(middleware.guest());
+router
+  .get("/auth/callback", [AuthController, "callback"])
+  .use(middleware.guest());
+router.post("/auth/logout", [AuthController, "logout"]).use(middleware.auth());
+```
 
-## Testing the driver
+### `app/controllers/auth_controller.ts`
 
-You can test the driver by installing it locally inside your AdonisJS application. Following are the steps you need to perform.
+```typescript
+export default class AuthController {
+  async login({ ally }: HttpContext) {
+    return ally.use("solvroAuth").redirect();
+  }
 
-- Compile the TypeScript code to JavaScript using the `npm run build` script.
-- `cd` into your AdonisJS project and install the package locally using `npm i path/to/your/driver/package`.
-- Finally, reference the driver using the `YourDriverService` factory function inside the `config/ally.ts` file.
+  async callback({ ally, auth, response }: HttpContext) {
+    const solvroUser = await ally.use("solvroAuth").user();
+    // Logika tworzenia/logowania użytkownika
+  }
 
-## FAQ's
-
-### How do I define extra params during redirect?
-
-You can configure the redirect request by implementing the `configureRedirectRequest` method on the driver class. The method is already pre-defined and commented out.
-
-```ts
-protected configureRedirectRequest(request: RedirectRequest<YourDriverScopes>) {
-  request.param('key', 'value')
+  async logout({ auth, response }: HttpContext) {
+    await auth.use("web").logout();
+    return response.redirect("/");
+  }
 }
 ```
 
-### How do I define extra fields/params for the access token request?
+## Rozwój
 
-You can configure the access token request by implementing the `configureAccessTokenRequest` method on the driver class. The method is already pre-defined and commented out.
+### Struktura kodu
 
-```ts
-protected configureAccessTokenRequest(request: ApiRequest) {
-  // Request body
-  request.field('key', 'value')
-
-  // Query param
-  request.param('key', 'value')
-}
+```
+src/
+├── driver.ts           # Implementacja Ally driver
+└── user_schema.ts      # Schema użytkownika
 ```
 
-## Share with others
+### Driver implementation
 
-Are you excited about sharing your work with others? Submit your package to the [awesome-adonisjs](https://github.com/adonisjs-community/awesome-adonisjs) repo.
+Driver implementuje standardowy interfejs AdonisJS Ally z następującymi właściwościami:
+
+- `authorizeUrl`: URL autoryzacji Keycloak
+- `accessTokenUrl`: URL wymiany kodu na token
+- `userInfoUrl`: URL pobierania informacji o użytkowniku
+- `codeParamName`: 'code'
+- `errorParamName`: 'error'
+- `stateCookieName`: 'solvro_oauth_state'
+- `stateParamName`: 'state'
+- `scopeParamName`: 'scope'
+- `scopesSeparator`: ' '
+
+## Testowanie
+
+### Lokalne testowanie
+
+1. Zbuduj pakiet:
+
+   ```bash
+   npm run build
+   ```
+
+2. W swojej aplikacji AdonisJS zainstaluj pakiet lokalnie:
+
+   ```bash
+   npm install path/to/solvro-auth/package
+   ```
+
+3. Skonfiguruj pakiet:
+   ```bash
+   node ace configure @solvro/auth
+   ```
+
+### Przykład aplikacji
+
+W folderze `examples/adonisjs` znajdziesz przykład pełnej aplikacji AdonisJS z skonfigurowanym Solvro Auth.
+
+## Wsparcie
+
+W razie problemów:
+
+1. Sprawdź dokumentację w głównym [README](../../README.md)
+2. Zapytaj na kanale #main i zpinguj @Bartosz Gotowski 😍
+
+## Licencja
+
+MIT License
+
+---
+
+_Stworzony z ❤️ przez Koło Naukowe Solvro_
