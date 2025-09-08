@@ -64,7 +64,7 @@ jobs:
             keycloak-usos-provider/target/pmd.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: always()
         with:
           file: keycloak-usos-provider/target/site/jacoco/jacoco.xml
