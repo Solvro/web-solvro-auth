@@ -69,9 +69,10 @@ npm install -D @types/passport-jwt
 
 ```typescript
 // src/auth/jwt.strategy.ts
+import { ExtractJwt, Strategy } from "passport-jwt";
+
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
