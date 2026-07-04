@@ -13,10 +13,14 @@
     "build": "tsc && vite build",
     "build-keycloak-theme": "npm run build && keycloakify build",
     "dev": "vite",
-    "format": "prettier . --write",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings=0",
     "prepare": "husky || true",
     "start": "keycloakify start-keycloak",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "types:check": "tsc --noEmit",
+    "types:generate": "next typegen"
   },
   "lint-staged": {
     "*": "prettier -w --ignore-unknown"
@@ -39,8 +43,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.3",
     "@eslint/js": "^9.36.0",
-    "@solvro/config": "^2.0.7",
+    "@solvro/config": "^2.3.4",
     "@storybook/react": "^8.6.14",
     "@storybook/react-vite": "^8.6.14",
     "@tailwindcss/typography": "^0.5.19",
