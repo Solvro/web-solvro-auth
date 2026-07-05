@@ -41,6 +41,10 @@ jobs:
         run: npm run types:check
         if: always()
 
+      - name: Check unused dependencies
+        run: npm run knip
+        if: always()
+
       - name: Build
         run: npm run build-keycloak-theme
         if: always()

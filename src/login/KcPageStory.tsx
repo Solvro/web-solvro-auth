@@ -17,7 +17,7 @@ const kcContextExtension: KcContextExtension = {
 };
 const kcContextExtensionPerPage: KcContextExtensionPerPage = {};
 
-export const { getKcContextMock } = createGetKcContextMock({
+const { getKcContextMock } = createGetKcContextMock({
   kcContextExtension,
   kcContextExtensionPerPage,
   overrides: {
