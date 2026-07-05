@@ -15,7 +15,7 @@ export default typescriptEslint.config(
   eslintConfigPrettier,
   ...storybook.configs["flat/recommended"],
   {
-    ignores: ["dist/**", "public/**"],
+    ignores: ["dist/**", "public/**", "src/components/ui/**"],
   },
   {
     plugins: {
@@ -39,6 +39,7 @@ export default typescriptEslint.config(
       ],
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-redeclare": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
       "no-labels": "off",
     },
   },
