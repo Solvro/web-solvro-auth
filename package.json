@@ -19,8 +19,7 @@
     "prepare": "husky || true",
     "start": "keycloakify start-keycloak",
     "storybook": "storybook dev -p 6006",
-    "types:check": "tsc --noEmit",
-    "types:generate": "next typegen"
+    "types:check": "tsc --noEmit"
   },
   "lint-staged": {
     "*": "prettier -w --ignore-unknown"
