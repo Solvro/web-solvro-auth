@@ -43,7 +43,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.5.3",
+    "@commitlint/cli": "^21.2.0",
     "@eslint/js": "^9.36.0",
     "@solvro/config": "^2.3.4",
     "@storybook/react": "^8.6.14",
