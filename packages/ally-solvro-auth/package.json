@@ -52,7 +52,7 @@
   "devDependencies": {
     "@adonisjs/ally": "^5.0.2",
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.17.2",
+    "@adonisjs/core": "^7.5.0",
     "@adonisjs/eslint-config": "^2.0.0",
     "@adonisjs/tsconfig": "^1.4.0",
     "@semantic-release/git": "^10.0.1",
