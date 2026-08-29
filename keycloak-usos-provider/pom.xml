@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <keycloak.version>26.1.2</keycloak.version>
-        <jackson.version>2.16.0</jackson.version>
+        <jackson.version>2.18.8</jackson.version>
         <httpclient.version>4.5.14</httpclient.version>
     </properties>
 
