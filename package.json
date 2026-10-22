@@ -34,7 +34,7 @@
     "@radix-ui/react-slot": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "keycloakify": "^11.16.1",
+    "keycloakify": "^11.16.3",
     "knip": "^6.42.0",
     "lucide-react": "^1.55.0",
     "react": "^18.2.0",
